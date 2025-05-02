@@ -1,0 +1,38 @@
+services:
+  # 🐘 Base de datos PostgreSQL
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: crmdb
+      POSTGRES_USER: crmuser
+      POSTGRES_PASSWORD: crmpass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # 🚀 Backend Node.js (Syntapp API)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/usr/src/app
+
+  # 🌐 Frontend (React o similar) — aún comentado
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    restart: always
+#    ports:
+#      - "3000:3000"
+
+volumes:
+  db_data:
